@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">ROL、INS 与 RIX 的结构及转换关系</title>
+  <desc id="desc">ROL 包含可编辑的 45 条轨道，INS 保存音色参数，RIX 包含头部、内嵌乐器记录和音乐指令流；图示了两种转换方向和文件字段布局。</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1 1 L11 6 L1 11 Z" fill="#2878e5"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1 1 L11 6 L1 11 Z" fill="#0caa79"/>
+    </marker>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #202b3a; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #627086; }
+      .section { font-size: 23px; font-weight: 700; }
+      .label { font-size: 17px; font-weight: 600; }
+      .body { font-size: 15px; }
+      .small { font-size: 13px; fill: #556277; }
+      .box { stroke: #d3dae5; stroke-width: 1.5; rx: 12; }
+      .blue { fill: #3b82f6; }
+      .blue-light { fill: #dceaff; }
+      .green { fill: #10b981; }
+      .green-light { fill: #d9f6eb; }
+      .purple { fill: #a855f7; }
+      .purple-light { fill: #f0e2ff; }
+      .pink { fill: #ec4899; }
+      .pink-light { fill: #fde1ef; }
+      .orange { fill: #f59e0b; }
+      .orange-light { fill: #fff0cc; }
+      .gray { fill: #e7ebf1; }
+      .white { fill: #fff; }
+      .arrow { fill: none; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <text x="54" y="58" class="title">ROL ↔ RIX 格式剖析与转换关系</text>
+  <text x="56" y="91" class="subtitle">ROL 保存可编辑轨道　·　INS 保存 OPL2 音色参数　·　RIX 内嵌音色并以指令流播放</text>
+
+  <text x="58" y="146" class="section">ROL：AdLib Visual Composer v0.4 工程</text>
+  <rect x="58" y="166" width="1484" height="176" class="box blue-light"/>
+  <rect x="78" y="185" width="186" height="54" rx="8" fill="#94a3b8"/>
+  <text x="171" y="218" text-anchor="middle" class="label white">固定头部 182 B</text>
+  <text x="171" y="260" text-anchor="middle" class="small">45 个计数器、节拍与签名</text>
+  <rect x="284" y="185" width="192" height="54" rx="8" fill="#60a5fa"/>
+  <text x="380" y="218" text-anchor="middle" class="label white">Tempo 轨</text>
+  <rect x="492" y="185" width="1010" height="54" rx="8" fill="#3b82f6"/>
+  <text x="997" y="218" text-anchor="middle" class="label white">11 个声部 × 4 条子轨：Voix · Timbre · Volume · Pitch</text>
+  <text x="80" y="286" class="body">Voix：音符号 + tick 时值</text>
+  <text x="390" y="286" class="body">Timbre：名称 + 乐器序号</text>
+  <text x="760" y="286" class="body">Volume：0.0–1.0</text>
+  <text x="1010" y="286" class="body">Pitch：音高倍率</text>
+  <text x="80" y="319" class="small">固定结构：1 条 Tempo + 11 × 4 条声部子轨 = 45 条轨道；轨道数据从 0xB6 开始。</text>
+
+  <text x="58" y="404" class="section">INS：80 字节 OPL2 音色记录</text>
+  <rect x="58" y="424" width="1484" height="146" class="box green-light"/>
+  <rect x="82" y="455" width="90" height="58" rx="8" fill="#94a3b8"/>
+  <text x="127" y="480" text-anchor="middle" class="label white">2 B</text>
+  <text x="127" y="500" text-anchor="middle" class="small white">保留</text>
+  <rect x="180" y="455" width="760" height="58" rx="8" class="green"/>
+  <text x="560" y="481" text-anchor="middle" class="label white">28 × UINT16 参数　·　56 B</text>
+  <text x="560" y="502" text-anchor="middle" class="small white">两个算子参数 + 两个波形值</text>
+  <rect x="948" y="455" width="180" height="58" rx="8" class="orange"/>
+  <text x="1038" y="490" text-anchor="middle" class="label white">名称　6 B</text>
+  <rect x="1136" y="455" width="374" height="58" rx="8" fill="#cbd5e1"/>
+  <text x="1323" y="490" text-anchor="middle" class="label">补零　16 B</text>
+  <text x="82" y="544" class="small">RIX 中每条内嵌音色记录为 64 B：56 B 参数 + 6 B 名称 + 2 B 填充。</text>
+
+  <path d="M 1410 345 C 1410 375, 1410 395, 1410 420" class="arrow" stroke="#0caa79" marker-end="url(#arrow-green)"/>
+  <text x="1425" y="385" class="small">ROL 引用音色</text>
+
+  <text x="58" y="630" class="section">RIX：播放器可执行的音乐数据</text>
+  <rect x="58" y="650" width="1484" height="116" class="box"/>
+  <rect x="82" y="675" width="200" height="66" rx="8" fill="#94a3b8"/>
+  <text x="182" y="704" text-anchor="middle" class="label white">头部　20 B</text>
+  <text x="182" y="727" text-anchor="middle" class="small white">55 AA 魔数 / 区块偏移</text>
+  <rect x="292" y="675" width="382" height="66" rx="8" class="green"/>
+  <text x="483" y="704" text-anchor="middle" class="label white">内嵌乐器库</text>
+  <text x="483" y="727" text-anchor="middle" class="small white">N 条 × 64 B</text>
+  <rect x="684" y="675" width="826" height="66" rx="8" class="blue"/>
+  <text x="1097" y="704" text-anchor="middle" class="label white">音乐指令流</text>
+  <text x="1097" y="727" text-anchor="middle" class="small white">每条 2 B：[数据][操作码]　·　时间以毫秒延时推进　·　00 80 结束</text>
+
+  <path d="M 470 345 C 470 488, 410 540, 410 644" class="arrow" stroke="#2878e5" marker-end="url(#arrow-blue)"/>
+  <text x="300" y="596" class="small">ROL 事件 → RIX 指令</text>
+  <path d="M 1110 575 C 1110 610, 840 610, 600 644" class="arrow" stroke="#0caa79" marker-end="url(#arrow-green)"/>
+  <text x="815" y="610" class="small">INS 音色参数嵌入 RIX</text>
+
+  <text x="58" y="824" class="section">RIX 指令类型</text>
+  <g transform="translate(58 844)">
+    <rect width="220" height="64" rx="8" fill="#34d399"/>
+    <text x="16" y="27" class="label">0x9x　装载乐器</text>
+    <text x="16" y="49" class="small">数据为乐器序号</text>
+    <rect x="236" width="220" height="64" rx="8" fill="#c084fc"/>
+    <text x="252" y="27" class="label">0xAx　音高</text>
+    <text x="252" y="49" class="small">0x80 为基准值</text>
+    <rect x="472" width="220" height="64" rx="8" fill="#f472b6"/>
+    <text x="488" y="27" class="label">0xBx　音量</text>
+    <text x="488" y="49" class="small">缩放声部音量</text>
+    <rect x="708" width="220" height="64" rx="8" fill="#60a5fa"/>
+    <text x="724" y="27" class="label">0xCx　音符</text>
+    <text x="724" y="49" class="small">非 0 开音，0 关音</text>
+    <rect x="944" width="260" height="64" rx="8" fill="#fbbf24"/>
+    <text x="960" y="27" class="label">0x0x–0x8x　延时</text>
+    <text x="960" y="49" class="small">两字节数值，单位毫秒</text>
+    <rect x="1220" width="262" height="64" rx="8" fill="#f87171"/>
+    <text x="1236" y="27" class="label">00 80　曲终</text>
+    <text x="1236" y="49" class="small">播放器可循环回到起点</text>
+  </g>
+  <text x="58" y="952" class="subtitle">ROL → RIX：音符和控制轨转换为指令流；INS 提供音色参数。　　RIX → ROL：还原事件并导出 INS；ROL 编辑器信息无法从 RIX 恢复。</text>
+</svg>
